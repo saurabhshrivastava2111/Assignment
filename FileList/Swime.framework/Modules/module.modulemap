@@ -1,0 +1,4 @@
+framework module Swime {
+    header "Swime-Swift.h"
+    requires objc
+}

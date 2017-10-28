@@ -1,0 +1,6 @@
+framework module Pods_FileListTests {
+  umbrella header "Pods-FileListTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
