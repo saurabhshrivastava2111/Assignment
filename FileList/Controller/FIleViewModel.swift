@@ -93,4 +93,8 @@ class FileViewModel {
     internal static func deleteAll(){
         FileViewModel.shared.files?.removeAll()
     }
+    
+    internal static func add(with name:String,and url:String){
+        FileViewModel.shared.files?.append(CoreData.shared.addItem(with: name, and: url))
+    }
 }

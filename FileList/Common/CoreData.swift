@@ -62,7 +62,7 @@ class CoreData {
         
         }
     
-    func addItem(with name:String,and url:String ){
+    func addItem(with name:String,and url:String ) -> File{
         let managedObjectContext = self.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "File",
                                                 in: self.persistentContainer.viewContext)!
@@ -70,5 +70,6 @@ class CoreData {
         file.name = name
         file.url = url
         self.saveContext()
+        return file
     }
 }

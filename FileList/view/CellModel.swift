@@ -39,9 +39,11 @@ class CellModel:DownloadmanagerDelegate {
         if let thumbnail = self.file.thumbnail {
             return thumbnail
         }else{
-            return CellModalHelper.thumbNail(mimeType: self.file.mimeType!,name: self.file.name!)
+            if let tempMimeype = self.file.mimeType{
+                return CellModalHelper.thumbNail(mimeType: tempMimeype,name: self.file.name!)
+            }
         }
-        
+        return nil
     }
     
     internal func isDownloaded()->Bool{
@@ -52,8 +54,6 @@ class CellModel:DownloadmanagerDelegate {
     public func downLoad(with refreshBlock:@escaping UIRefreshBlock){
         self.downloadmanager = DownloadManager.init(with: .background(withIdentifier: Bundle.main.bundleIdentifier!))
         self.downloadmanager?.onProgress = self.onProgress
-        let application = UIApplication.shared
-        weak var weakSelf = self
         self.downloadmanager?.downloadFile(with: self.file.url!, delegate: self)
         self.uiRefreshBlock = refreshBlock
     }

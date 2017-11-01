@@ -47,6 +47,38 @@ class FileListViewController: UICollectionViewController,UICollectionViewDelegat
         // clear content and download fresh one.
     }
     
+    @IBAction func add(){
+        let alertController = UIAlertController(title: "Add New Entry", message: "", preferredStyle: UIAlertControllerStyle.alert)
+        
+        weak var weakSelf = self
+        
+        let saveAction = UIAlertAction(title: "Save", style: UIAlertActionStyle.default, handler: {
+            alert -> Void in
+            
+            let nameTextField = alertController.textFields![0] as UITextField
+            let urltextfield = alertController.textFields![1] as UITextField
+            FileViewModel.add(with: nameTextField.text!, and: urltextfield.text!)
+            weakSelf?.collectionView?.reloadData()
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: {
+            (action : UIAlertAction!) -> Void in
+            
+        })
+        
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Enter Name"
+        }
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Enter URL"
+        }
+        
+        alertController.addAction(saveAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
     fileprivate func toggleSelectButton() {
         if !self.isSelectionModeOn {
             self.selectButton?.title = "Cancel"
