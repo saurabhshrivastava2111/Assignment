@@ -13,18 +13,32 @@ import UIKit
 
 class Utility: NSObject {
     
-    static func url(mimeType:MimeType)->URL{
+    static func url(mimeType:MimeType,name:String)->URL{
         
         var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         
-        let count = try? FileManager.default.contentsOfDirectory(atPath: Utility.documentDirectoryPath()).count
+        let fileName = name.appending("."+mimeType.ext)
+
+        url.appendPathComponent(fileName)
         
-        url = url.appendingPathComponent(Bundle.main.bundleIdentifier! + "\(count!)"+"."+mimeType.ext)
-        
+        print(url)
         
         return url
     }
     
+    
+    static func plistURL()->URL{
+        var url = FileManager.default.urls(for:.cachesDirectory, in: .userDomainMask).first!
+        url = url.appendingPathComponent("Files.plist")
+        return url
+    }
+    
+    static func url(for name:String,with pathExtension:String)->URL{
+        var path:URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        path  = path.appendingPathComponent(name+"."+pathExtension)
+        return path
+
+    }
     
     static func documentDirectoryPath()->String{
         let nsDocumentDirectory = FileManager.SearchPathDirectory.documentDirectory
@@ -64,9 +78,9 @@ class Utility: NSObject {
     
     
     // This method generates thumbnail from the Video
-    static func generateVideoThumbnail(with path:String) -> UIImage{
+    static func generateVideoThumbnail(with url:URL) -> UIImage{
         do {
-            let asset = AVURLAsset.init(url: URL.init(fileURLWithPath: path))
+            let asset = AVURLAsset.init(url: url)
             let imgGenerator = AVAssetImageGenerator(asset: asset)
             imgGenerator.appliesPreferredTrackTransform = true
             let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(0, 100), actualTime: nil)
@@ -80,4 +94,33 @@ class Utility: NSObject {
         return UIImage.init(named: "Default")!
     }
 
+    
+//    static func write(files:[File]){
+//        
+//        let plistFiles:NSMutableArray = NSMutableArray.init(contentsOf: Utility.plistURL())!
+//        
+//        for aFile in files {
+//            let predicate = NSPredicate.init(format: "SELF.name=%@", aFile.name!)
+//            
+//            let filteredArray = plistFiles.filtered(using: predicate)
+//            
+//            
+//            let dictFile = [keyName:aFile.name,
+//                            keyPath:aFile.path,
+//                            keyURL:aFile.url,
+//                            keyExtension:aFile.mimeType.ext,
+//                            keyIsDownloaded:aFile.isDownloaded,
+//                            keyTime:aFile.time?.seconds ?? 0.0] as [String : Any]
+//
+//            
+//            if filteredArray.count > 0{
+//                plistFiles.replaceObject(at: plistFiles.index(of: filteredArray.first ), with: dictFile)
+//            }else{
+//                plistFiles.add(dictFile)
+//            }
+//        }
+//        
+//        plistFiles.write(to: Utility.plistURL(), atomically: true)
+//        
+//    }
 }

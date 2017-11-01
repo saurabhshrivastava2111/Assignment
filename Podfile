@@ -2,8 +2,7 @@
 # platform :ios, '9.0'
 
 def framework_pods
-
-pod 'Alamofire'
+pod ‘Floaty’
 use_frameworks!
 
 end
@@ -15,23 +14,4 @@ target 'FileList' do
   use_frameworks!
 
   # Pods for FileList
-
-  target 'FileListTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-  target 'FileListUITests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-end
-
-target 'FileShare' do
-  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
-  use_frameworks!
-
-  # Pods for FileShare
-
 end

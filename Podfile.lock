@@ -1,12 +1,12 @@
 PODS:
-  - Alamofire (4.5.1)
+  - Floaty (4.0.0)
 
 DEPENDENCIES:
-  - Alamofire
+  - Floaty
 
 SPEC CHECKSUMS:
-  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
+  Floaty: 4f88811bbf08521807f42355db6a9c0db85d5d78
 
-PODFILE CHECKSUM: af103a17570356dc8a965a6d103202cc9d40fb48
+PODFILE CHECKSUM: 9bcb1180b706d2afd117ebe5b277b44b28b8e434
 
 COCOAPODS: 1.2.1

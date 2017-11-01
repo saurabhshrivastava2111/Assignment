@@ -10,82 +10,95 @@ import UIKit
 import Swime
 import AVFoundation
 
-private let __no_of_sections__ = 1
-private let __no_content__  = 0
+enum DisplayStyle:String {
+    case grid = "Grid"
+    case list = "List"
+}
 
 class HeaderView:UICollectionReusableView{
 }
 
 class FileListViewController: UICollectionViewController,UICollectionViewDelegateFlowLayout {
     
-    var arrFiles:[File] = FileListHelper.shared.getFiles()
     var isListView:Bool = true
     var toggleButton = UIBarButtonItem()
     var slectedItem:File!
     var progressView: UIProgressView!
+    var displayStyle:DisplayStyle = .grid
+    var selectButton : UIBarButtonItem?
+    var isSelectionModeOn:Bool = false
+    var selectedIndexPath:IndexPath!
+    
+    @IBOutlet weak var btnShare:UIBarButtonItem!
+    @IBOutlet weak var btnDelete:UIBarButtonItem!
+    @IBOutlet weak var btnDEleteAll:UIBarButtonItem!
     
     //MARK: -- custom methods
       func configureNavBar(){
-        self.toggleButton = UIBarButtonItem.init(title: "Grid", style: .plain, target: self, action: #selector(sel_toggleListGrid))
+        self.toggleButton = UIBarButtonItem.init(title: DisplayStyle.list.rawValue, style: .plain, target: self, action: #selector(sel_toggleListGrid(button:)))
         
-        let refreshButton = UIBarButtonItem.init(title: "Refresh Content", style: .plain, target: self, action: #selector(refreshContent))
+        self.selectButton = UIBarButtonItem.init(title: "Select", style: .plain, target: self, action: #selector(sel_select(button:)))
         
-        self.navigationItem.setRightBarButtonItems([self.toggleButton], animated: true)
-        self.navigationItem.setLeftBarButtonItems([refreshButton], animated: true)
+        self.navigationItem.setLeftBarButtonItems([self.toggleButton], animated: true)
+        self.navigationItem.setRightBarButton(self.selectButton, animated: true)
     }
     
     @objc func refreshContent(){
         // clear content and download fresh one.
-        FileListHelper.shared.clearAllContent()// Clear all content from the file and down a fresh again
-        let docDirPath = Utility.documentDirectoryPath()
-        let contentCount = try? FileManager.default.contentsOfDirectory(atPath: docDirPath).count
-//        if contentCount!  <= __no_content__ {
-//            self.downLoadFiles()
-//        }
     }
     
-    @objc func sel_toggleListGrid(){
-        
-        self.isListView = !self.isListView
-        if self.isListView {// if list view is slected
-            self.toggleButton = UIBarButtonItem.init(title: "Grid", style: .plain, target: self, action: #selector(sel_toggleListGrid))
+    fileprivate func toggleSelectButton() {
+        if !self.isSelectionModeOn {
+            self.selectButton?.title = "Cancel"
             
-        }else{// if grid view is selected.
-            self.toggleButton = UIBarButtonItem.init(title: "List", style: .plain, target: self, action: #selector(sel_toggleListGrid))
+        } else {
+            self.selectButton?.title = "Select"
+            FileViewModel.cancelSelection()
         }
+    }
+    
+    @objc func sel_select(button:UIBarButtonItem){
+        self.toggleSelectButton()
+        self.isSelectionModeOn = !self.isSelectionModeOn
+        self.enableActionButtons()// enable action buttons once selectionMode is on
+        self.collectionView?.reloadData()
+    }
+    
+    @objc func sel_toggleListGrid(button:UIBarButtonItem){
         
+        self.displayStyle = DisplayStyle.init(rawValue: button.title!)!
+        
+        switch self.displayStyle {
+        case .grid:
+            self.toggleButton = UIBarButtonItem.init(title: DisplayStyle.list.rawValue, style: .plain, target: self, action: #selector(sel_toggleListGrid))
+            
+            break;
+        case .list:
+            self.toggleButton = UIBarButtonItem.init(title: DisplayStyle.grid.rawValue, style: .plain, target: self, action: #selector(sel_toggleListGrid))
+            break;
+        }
+        self.displayStyle = DisplayStyle.init(rawValue: self.toggleButton.title!)!
         self.navigationItem.setRightBarButtonItems([self.toggleButton], animated: true)
         self.collectionView?.reloadData()
+        
     }
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.collectionView?.backgroundColor = UIColor.lightGray
-        self.collectionView?.register(ListFileCell.self, forCellWithReuseIdentifier: fileListCellReuseIdentifier)
-        self.collectionView?.register(GridFileCell.self, forCellWithReuseIdentifier: fileGridCellReuseIdentifier)
-        
         self.collectionView?.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "ProgressBarReuseIdentifier")
         
         self.configureNavBar()
         self.navigationItem.title = "FileList"
-        
-        self.arrFiles = FileListHelper.shared.getFiles()
-        // Do any additional setup after loading the view.se
-//        if self.arrFiles.count <= 0 {
-//            self.downLoadFiles()
-//        }
+        self.collectionView?.allowsMultipleSelection = true
+        self.navigationController?.setToolbarHidden(false, animated: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        weak var weakself = self
-//        FileListHelper.shared.onProgress = { (progress) in
-////            OperationQueue.main.addOperation {
-////                weakself?.progressView.progress = progress
-////            }
-//        }
     }
+    
     
     
 //    func downLoadFiles(){
@@ -101,7 +114,6 @@ class FileListViewController: UICollectionViewController,UICollectionViewDelegat
     
     
     func refreshContentArray(){
-        self.arrFiles = FileListHelper.shared.getFiles()
     }
     
     
@@ -126,107 +138,208 @@ class FileListViewController: UICollectionViewController,UICollectionViewDelegat
 extension FileListViewController{
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return __no_of_sections__
+        return FileViewModel.numberOfSections()
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return urlCollection.count
+        return FileViewModel.numberOfItems(in:section)
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        
-           let fileCell = collectionView.dequeueReusableCell(withReuseIdentifier:fileGridCellReuseIdentifier , for: indexPath) as! GridFileCell
-
-        
-            return fileCell
-
-//        }
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        if kind == UICollectionElementKindSectionHeader {
-            
-            let reuseHeaderView:HeaderView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "ProgressBarReuseIdentifier", for: indexPath) as! HeaderView
-            
-            
-            self.progressView = UIProgressView.init(frame: CGRect.init(x: 0, y: 10, width: collectionView.frame.size.width, height: 10))
-            
-            self.progressView.trackTintColor = UIColor.red
-            
-            reuseHeaderView.addSubview(self.progressView)
-            
-            return reuseHeaderView
+        switch self.displayStyle {
+        case .grid:
+            return gridCellForItem(at: indexPath)
+        case .list:
+            break;
         }
         
-        return UICollectionReusableView.init()
+        return UICollectionViewCell()
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize.init(width: collectionView.frame.size.width, height:30)
+    
+    fileprivate func gridCellForItem(at indexPath:IndexPath) -> UICollectionViewCell{
+        let gridCell = self.collectionView?.dequeueReusableCell(withReuseIdentifier:fileGridCellReuseIdentifier , for: indexPath) as! GridFileCell
+        
+        let file:File = FileViewModel.item(at:indexPath)
+        
+        if !(file.isDownloaded?.boolValue)!  {
+            gridCell.btnDownload.isHidden = false
+        }else{
+            gridCell.btnDownload.isHidden = true
+        }
+        
+        gridCell.cellModel = CellModel.init(with:file)
+        
+        return gridCell
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let width = self.collectionView?.frame.width
         
-        if self.isListView {
+        switch self.displayStyle {
+        case .grid:
+            switch self.traitCollection.horizontalSizeClass{
+            case .compact:
+                return CGSize(width: (width! - 15)/2, height: (width! - 15)/2)
+            case .regular:
+                 return CGSize(width: (width! - 15)/4, height: (width! - 15)/4)
+            case .unspecified:
+                return CGSize(width: (width! - 15)/2, height: (width! - 15)/2)
+            }
+        case .list:
             return CGSize(width: width!, height: 120)
-        }else {
-            return CGSize(width: (width! - 15)/2, height: (width! - 15)/2)
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 5
+    }
+
+     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 5
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
+    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if self.isSelectionModeOn {
+            _ = FileViewModel.selectItem(at: indexPath.row)
+            self.enableActionButtons()
+        }
+    }
+    
+    func showAlert(with message:String){
+        let alert = UIAlertController.init(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "OK", style: .default, handler: { (action) in
+            self.dismiss(animated: true, completion: nil)
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        self.slectedItem = self.arrFiles[indexPath.row]
-//        self.performSegue(withIdentifier: documentVCSegueIdentifier, sender: self)
+        if self.isSelectionModeOn {
+            let success = FileViewModel.selectItem(at: indexPath.row)
+            if !success{
+                collectionView.deselectItem(at: indexPath, animated: false)
+                self.showAlert(with: "File is not downloaded, download to share")
+            }
+            self.enableActionButtons()
+        }else{
+            self.selectedIndexPath = indexPath
+            collectionView.deselectItem(at: indexPath, animated: false)
+            self.performSegue(withIdentifier: "DocumentVCSegueIdentifier", sender: self)
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        if self.traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass {
+            self.collectionView?.collectionViewLayout.invalidateLayout()
+        }
     }
 }
 
-
+// Bottom toolbar action Methods.
 extension FileListViewController{
     
-    func getThumbnail(mimeType:MimeType, path:String)->UIImage{
+    func enableActionButtons(){
         
-        switch mimeType.type {
-        case .jpg,.png,.gif:
-            if let image =  UIImage.init(contentsOfFile: path){
-                return Utility.generateThumbnail(for: image, with: CGSize.init(width: 100.0, height: 100.0))
+        if self.isSelectionModeOn {
+            if let selectedFiles = FileViewModel.shared.selectedFiles {
+                if selectedFiles.count > 0 {
+                    self.btnDelete.isEnabled = true
+                    self.btnShare.isEnabled  = true
+                }
+                else{
+                    self.btnDelete.isEnabled = false
+                    self.btnShare.isEnabled = false
+                }
             }
-        case .pdf,.rtf:
-            break
-            // generate thumbnail for PDf
-        case .mov,.mp4,.m4v:
-            // generate thumbnail for Video
-            
-            return Utility.generateVideoThumbnail(with: path)
-            
-        default: break
+            self.btnDEleteAll.isEnabled = true
+        }else{
+            self.btnDelete.isEnabled = false
+            self.btnShare.isEnabled = false
+            self.btnDEleteAll.isEnabled = false
+        }
+    }
+    
+    @IBAction func delete(){
+        FileViewModel.deleteSelectedFiles()// Delete Selected files
+        self.collectionView?.reloadData()
+        self.isSelectionModeOn = false
+        self.toggleSelectButton()
+        self.enableActionButtons()
+    }
+    
+    @IBAction func share(){
+        var itemsToShare:[Any] = [Any]()
+        var shareData:Data?
+        for anItem in FileViewModel.shared.selectedFiles! {
+            if (anItem.isDownloaded?.boolValue)! {
+                do{
+                    shareData = try Data.init(contentsOf: Utility.url(mimeType: anItem.mimeType!, name: anItem.name!))
+                    
+                    itemsToShare.append(shareData ?? Data.init())
+                    shareData = nil
+                    
+                }catch{
+                    print(error)
+                }
+                
+            }
             
         }
-        return UIImage.init(named: "Default")!
+        
+        let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
+        activityVC.popoverPresentationController?.sourceView = self.view
+        weak var weakSelf = self
+        self.present(activityVC, animated: true) {
+            weakSelf?.isSelectionModeOn = false
+            weakSelf?.collectionView?.reloadData()
+            weakSelf?.toggleSelectButton()
+            weakSelf?.enableActionButtons()
+        }
+
+    }
+    
+    
+    @IBAction func deleteAll(){
+        let alertController = UIAlertController.init(title: "", message: "Are you sure, you want to delete?", preferredStyle: .alert)
+        let deleteAction = UIAlertAction.init(title: "Delete", style: .destructive) { (action) in
+            FileViewModel.deleteAll()// delete All files// This is a temporary deletion from the list of array
+            self.collectionView?.reloadData()
+            self.toggleSelectButton()
+            self.isSelectionModeOn = false
+            self.enableActionButtons()
+
+        }
+        
+        let cancelAction = UIAlertAction.init(title: "Cancel", style: .default) { (action) in
+        self.dismiss(animated: true, completion: nil)
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        
     }
 }
 
 
+//MARK:- Prepare for Segue
 extension FileListViewController{
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
-        let filePreviewVC: FilepreviewController = segue.destination as! FilepreviewController
-        filePreviewVC.selectedItemType = self.slectedItem.mimeType
-        filePreviewVC.documentPath  = self.slectedItem.path
-    }
+        let previewViewCOntroller = segue.destination as! FilepreviewController
+        previewViewCOntroller.fileModel = FilePreviewModel.init(with: FileViewModel.item(at: self.selectedIndexPath))
+    }    
 }
+

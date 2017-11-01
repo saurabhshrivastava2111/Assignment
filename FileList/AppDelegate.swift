@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,11 +20,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.registerSettingsBundle()
         
         NotificationCenter.default.addObserver(self, selector: #selector(settingsBundleUpdated), name:UserDefaults.didChangeNotification, object: nil)
+        
+        let context = CoreData.shared.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "AppState")
+        do {
+            let appStates = try context.fetch(fetchRequest) as! [AppState]
+            if appStates.count  <= 0  {
+                let entity = NSEntityDescription.entity(forEntityName: "AppState",
+                                                        in: context)!
+                
+                let appState:AppState = AppState.init(entity: entity, insertInto: context)
+                appState.isFirstTime = NSNumber.init(value: false) as! Bool
+
+                self.saveURLs()
+            }
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
         return true
     }
     
     @objc func settingsBundleUpdated(){
         // once settings bundle is updated thsi method will be called.
+    }
+    
+    
+    func copyPlist(){
+        let fileManager = FileManager.default
+        let plistPath = Bundle.main.path(forResource: "Files", ofType: "plist")
+        
+        if fileManager.fileExists(atPath: plistPath!){
+            let dirPaths = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
+            
+            var cacheURL = dirPaths.first!
+            
+            cacheURL = cacheURL.appendingPathComponent("Files.plist")
+            
+            if !fileManager.fileExists(atPath: cacheURL.path){
+                do{
+                    try fileManager.copyItem(at: URL.init(string: "file://"+plistPath!)! , to: URL.init(string: "file://" + cacheURL.path)!)
+                }
+                catch{
+                    print(error)
+                }
+            }
+        }
     }
         
 
@@ -73,7 +114,70 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
+    
+    func saveURLs(){
+        let managedContext = CoreData.shared.persistentContainer.viewContext
+        
+        for aURLct in urlCollections {
+            let entity = NSEntityDescription.entity(forEntityName: "File",
+                                                    in: managedContext)!
+            
+            let file = File.init(entity: entity, insertInto: managedContext)
+            file.name = aURLct[keyName]!
+            file.url = String.init(format: "%@?%@",baseURL,aURLct[keyURL]!)
+        }
+        
+        do {
+           try managedContext.save()
+        } catch  {
+            print(error)
+        }
+    }
+    
+    
+    // MARK: - Core Data stack
+    
+//    lazy var persistentContainer: NSPersistentContainer = {
+//        /*
+//         The persistent container for the application. This implementation
+//         creates and returns a container, having loaded the store for the
+//         application to it. This property is optional since there are legitimate
+//         error conditions that could cause the creation of the store to fail.
+//         */
+//        let container = NSPersistentContainer(name: "FileList")
+//        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+//            if let error = error as NSError? {
+//                // Replace this implementation with code to handle the error appropriately.
+//                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+//
+//                /*
+//                 Typical reasons for an error here include:
+//                 * The parent directory does not exist, cannot be created, or disallows writing.
+//                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
+//                 * The device is out of space.
+//                 * The store could not be migrated to the current model version.
+//                 Check the error message to determine what the actual problem was.
+//                 */
+//                fatalError("Unresolved error \(error), \(error.userInfo)")
+//            }
+//        })
+//        return container
+//    }()
+    
+    // MARK: - Core Data Saving support
+    
+//    func saveContext () {
+//        let context = persistentContainer.viewContext
+//        if context.hasChanges {
+//            do {
+//                try context.save()
+//            } catch {
+//                // Replace this implementation with code to handle the error appropriately.
+//                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+//                let nserror = error as NSError
+//                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+//            }
+//        }
+//    }
 }
 

@@ -10,18 +10,17 @@ import Foundation
 import Swime
 
 protocol DownloadmanagerDelegate:class {
-    func didCompleteTask(with success:Bool)
+//    func didCompleteTask(with success:Bool)
+    func didCompleteTask(with success:Bool,location:URL)
 }
 
 final class DownloadManager:NSObject,URLSessionTaskDelegate,URLSessionDownloadDelegate{
     
-    static let shared = DownloadManager()
-    private let config:URLSessionConfiguration = URLSessionConfiguration.background(withIdentifier: Bundle.main.bundleIdentifier!)
-    
     weak var delegate: DownloadmanagerDelegate!
+    var downloadCompletionBlock:DownloadCompletionHandler!
     var bytesRecieved:Int64 = 0
     var totalBytesRecieved:Int64 = 1 // to avoid exception devide by 0
-    
+    var config:URLSessionConfiguration!
     var onProgress : ProgressHandler? {
         didSet {
             if onProgress != nil {
@@ -34,8 +33,8 @@ final class DownloadManager:NSObject,URLSessionTaskDelegate,URLSessionDownloadDe
         return URLSession(configuration: self.config, delegate: self, delegateQueue: OperationQueue())
     }
 
-    private override init() {
-        
+    init(with configuration:URLSessionConfiguration) {
+        self.config = configuration
     }
     
   /*  static let shared = FileDownloader()
@@ -58,20 +57,14 @@ final class DownloadManager:NSObject,URLSessionTaskDelegate,URLSessionDownloadDe
         self.url = URL.init(string: url)!
     }
     */
-    func downloadFile(with urls:[String], delegate:DownloadmanagerDelegate){
+    func downloadFile(with url:String, delegate:DownloadmanagerDelegate){
         self.delegate = delegate
-        for aURL in urls {
-            let completeURL = baseURL.appendingFormat("?%@",aURL)
-            print(completeURL)
-            let url = URL.init(string: completeURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
-            let downloadTask = self.urlSession().downloadTask(with: url)
-            downloadTask.resume()
-        }
+        let downloadTask = self.urlSession().downloadTask(with: URL.init(string: url)!)
+        downloadTask.resume()
     }
     
     deinit {
     }
-
 }
 
 
@@ -110,12 +103,10 @@ extension DownloadManager{
             
             let mimeType = Swime.mimeType(data: data!)
             
-            if let tempMimeTye = mimeType {
-                try data?.write(to: Utility.url(mimeType: tempMimeTye))
-                try? FileManager.default.removeItem(at: location)
-                weakself?.delegate.didCompleteTask(with: true)
+            if let _ = mimeType {
+                weakself?.delegate?.didCompleteTask(with: true, location: location)
             }else{
-                weakself?.delegate.didCompleteTask(with: false)
+                weakself?.delegate?.didCompleteTask(with: false,location: location)
             }
             data = nil
             

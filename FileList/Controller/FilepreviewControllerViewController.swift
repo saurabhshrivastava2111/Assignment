@@ -8,11 +8,13 @@
 
 import UIKit
 import Swime
+import WebKit
 class FilepreviewController: UIViewController,UIWebViewDelegate {
     
     @IBOutlet weak var webView:UIWebView!
     @IBOutlet weak var imageView:UIImageView!
     @IBOutlet weak var activity:UIActivityIndicatorView!
+    var fileModel:FilePreviewModel!
     
     var documentPath:String!
     var selectedItemType:MimeType!
@@ -21,7 +23,11 @@ class FilepreviewController: UIViewController,UIWebViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.configureNavBar()
-        self.isImage = Utility.isImage(mimeType: self.selectedItemType)
+        self.isImage = self.fileModel.isImage
+        self.webView.allowsInlineMediaPlayback = true
+        self.webView.scrollView.bounces = false
+        self.webView.mediaPlaybackRequiresUserAction = false
+        
         self.loadContent()
         // Do any additional setup after loading the view.
     }
@@ -41,20 +47,26 @@ class FilepreviewController: UIViewController,UIWebViewDelegate {
     }
     
     func loadContent(){
-        if self.isImage {
-            self.imageView.isHidden = false
-            self.webView.isHidden = true
-            self.imageView.image = UIImage.init(contentsOfFile: self.documentPath)
+        if self.fileModel.isDownloaded {
+            let fileURL = Utility.url(mimeType: self.fileModel.file.mimeType!, name: self.fileModel.file.name!)
+            if self.isImage{
+                self.imageView.isHidden = false
+                self.webView.isHidden = true
+                self.imageView.image = UIImage.init(contentsOfFile: (fileURL.path))
+                }else{
+                    self.imageView.isHidden = true
+                    self.webView.isHidden = false
+                let requestURL = URLRequest.init(url: fileURL);
+                self.webView.loadRequest(requestURL)
+                }
         }else{
             self.imageView.isHidden = true
             self.webView.isHidden = false
-            let url = URL.init(fileURLWithPath: self.documentPath)
-            let requestURL = URLRequest.init(url: url);
-            self.webView.loadRequest(requestURL);
+            let requestURL = URLRequest.init(url:self.fileModel.url)//URLRequest.init(url: self.fileModel.url);
+            self.webView.loadRequest(requestURL)
+            
         }
     }
-    
-    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -72,10 +84,19 @@ class FilepreviewController: UIViewController,UIWebViewDelegate {
     }
     */
     
+    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+        return true
+    }
+    
     func webViewDidStartLoad(_ webView: UIWebView) {
         self.activity.startAnimating()
     }
-
+    
+    
+    func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
+        print(error.localizedDescription)
+        self.activity.stopAnimating()
+    }
     func webViewDidFinishLoad(_ webView: UIWebView) {
         self.activity.stopAnimating()
     }
