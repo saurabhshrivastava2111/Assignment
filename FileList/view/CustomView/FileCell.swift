@@ -86,7 +86,6 @@ class GridFileCell: UICollectionViewCell {
     override func awakeFromNib() {
     }
     
-    
     func setDataToUIControls(){
         if self.cellModel.isDownloaded() {
             self.imgThumbnail.image = self.cellModel.thumbnail()
@@ -129,6 +128,7 @@ class GridFileCell: UICollectionViewCell {
         }else{
             downLoad.isSelected = false
             self.canCelDownload()
+            self.viewProgress.isHidden = true
         }
     }
     
@@ -154,10 +154,18 @@ class GridFileCell: UICollectionViewCell {
         weak var weakSelf = self
         self.cellModel.downLoad(){(success,filePath) in
             OperationQueue.main.addOperation {
+                
                 weakSelf?.btnDownload.isHidden = true
                 weakSelf?.viewProgress.isHidden = true
-                weakSelf?.imgThumbnail.image = weakSelf?.cellModel.thumbnail()
-                CoreData.shared.saveContext()
+
+                if (success){
+                    weakSelf?.imgThumbnail.image = weakSelf?.cellModel.thumbnail()
+                    CoreData.shared.saveContext()
+
+                }else{
+                    weakSelf?.btnDownload.isSelected = false
+                    weakSelf?.viewProgress.isHidden = true
+                }
             }
         }
     }

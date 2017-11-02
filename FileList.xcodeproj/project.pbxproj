@@ -27,23 +27,11 @@
 		095233341FA9B7E7000F6BAD /* FilePreviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095233331FA9B7E7000F6BAD /* FilePreviewModel.swift */; };
 		095233361FA9B8BD000F6BAD /* FIleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095233351FA9B8BD000F6BAD /* FIleViewModel.swift */; };
 		095233381FAA1C12000F6BAD /* CustomCollectionLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095233371FAA1C12000F6BAD /* CustomCollectionLayout.swift */; };
-		099CB3DA1FA64E80003A3D53 /* Swime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 099CB3D91FA64E80003A3D53 /* Swime.framework */; };
-		099CB3DB1FA65227003A3D53 /* Swime.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 099CB3D91FA64E80003A3D53 /* Swime.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		099CB3DD1FA6BDBA003A3D53 /* CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099CB3DC1FA6BDBA003A3D53 /* CoreData.swift */; };
+		09A99F621FAAC4C7007B4167 /* Swime.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 099CB3D91FA64E80003A3D53 /* Swime.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		0948204C1F91545C002EAE03 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				099CB3DB1FA65227003A3D53 /* Swime.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0979FA091FA036F4004FB7D3 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -52,6 +40,17 @@
 			files = (
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		09A99F601FAAC477007B4167 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				09A99F621FAAC4C7007B4167 /* Swime.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -81,6 +80,8 @@
 		095233371FAA1C12000F6BAD /* CustomCollectionLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionLayout.swift; sourceTree = "<group>"; };
 		099CB3D91FA64E80003A3D53 /* Swime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Swime.framework; sourceTree = "<group>"; };
 		099CB3DC1FA6BDBA003A3D53 /* CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreData.swift; sourceTree = "<group>"; };
+		09A99F571FAAC44C007B4167 /* Swime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Swime.framework; sourceTree = "<group>"; };
+		09A99F591FAAC44C007B4167 /* Swime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Swime.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +89,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				099CB3DA1FA64E80003A3D53 /* Swime.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,6 +98,8 @@
 		0903FEA31F9EDA3F0056053B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				09A99F561FAAC44C007B4167 /* Dev */,
+				09A99F581FAAC44C007B4167 /* Sim */,
 				099CB3D91FA64E80003A3D53 /* Swime.framework */,
 			);
 			name = Frameworks;
@@ -221,6 +223,22 @@
 			path = CustomView;
 			sourceTree = "<group>";
 		};
+		09A99F561FAAC44C007B4167 /* Dev */ = {
+			isa = PBXGroup;
+			children = (
+				09A99F571FAAC44C007B4167 /* Swime.framework */,
+			);
+			path = Dev;
+			sourceTree = "<group>";
+		};
+		09A99F581FAAC44C007B4167 /* Sim */ = {
+			isa = PBXGroup;
+			children = (
+				09A99F591FAAC44C007B4167 /* Swime.framework */,
+			);
+			path = Sim;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -231,8 +249,8 @@
 				09481FCB1F90ECBE002EAE03 /* Sources */,
 				09481FCC1F90ECBE002EAE03 /* Frameworks */,
 				09481FCD1F90ECBE002EAE03 /* Resources */,
-				0948204C1F91545C002EAE03 /* Embed Frameworks */,
 				0979FA091FA036F4004FB7D3 /* Embed App Extensions */,
+				09A99F601FAAC477007B4167 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

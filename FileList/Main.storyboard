@@ -91,25 +91,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="692"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="kda-Da-IsL">
-                            <size key="itemSize" width="163" height="143"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        </collectionViewFlowLayout>
+                        <collectionViewLayout key="collectionViewLayout" id="wbY-v8-ZvV" customClass="CustomCollectionLayout" customModule="FileList" customModuleProvider="target"/>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" misplaced="YES" reuseIdentifier="FileGridReuseIdentifier" id="abP-AX-Cgn" userLabel="Grid Cell" customClass="GridFileCell" customModule="FileList" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="163" height="143"/>
+                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="163" height="143"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mSq-ml-DZi">
-                                            <rect key="frame" x="-0.6666666666666714" y="0.0" width="163.33333333333337" height="99"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="6"/>
                                         </imageView>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aXP-9p-jLw" userLabel="ProgressView">
-                                            <rect key="frame" x="56" y="24.666666666666671" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="-22" width="50" height="50"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="50" id="NL9-PC-Vw6"/>
@@ -128,7 +123,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aJY-sr-8RN" userLabel="SelectButton">
-                                            <rect key="frame" x="132" y="69" width="30" height="30"/>
+                                            <rect key="frame" x="19" y="-24" width="30" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="L72-jx-Vjy"/>
                                                 <constraint firstAttribute="width" constant="30" id="z6Z-m8-Pfu"/>
@@ -137,7 +132,7 @@
                                             <state key="selected" backgroundImage="Selected"/>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="szn-cP-10t" userLabel="Download">
-                                            <rect key="frame" x="66.666666666666671" y="34.666666666666664" width="30" height="29.999999999999993"/>
+                                            <rect key="frame" x="10" y="-12" width="30" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="mz6-Xn-0si"/>
                                                 <constraint firstAttribute="width" constant="30" id="oI4-RW-0hm"/>

@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.registerSettingsBundle()
         
         NotificationCenter.default.addObserver(self, selector: #selector(settingsBundleUpdated), name:UserDefaults.didChangeNotification, object: nil)
+        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
         
         let context = CoreData.shared.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "AppState")
@@ -101,6 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        NotificationCenter.default.post(name: Notification.Name.UIApplicationDidEnterBackground, object: nil)
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {

@@ -21,9 +21,25 @@ class CellModel:DownloadmanagerDelegate {
     var uiRefreshBlock: UIRefreshBlock!
     var downloadmanager:DownloadManager?
     var onProgress : ProgressHandler?
-    var backgroundTask:UIBackgroundTaskIdentifier!
+    var backgroundTask:UIBackgroundTaskIdentifier!  = UIBackgroundTaskInvalid
      init(with file:File){
         self.file = file
+        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackGround), name: Notification.Name.UIApplicationDidEnterBackground, object: nil)
+    }
+    
+    @objc private func didEnterBackGround(){
+        self.registerBackgroundtask()
+    }
+    
+    func registerBackgroundtask(){
+        backgroundTask = UIApplication.shared.beginBackgroundTask(expirationHandler: { [weak self] in
+            self?.endBackGroundTask()
+        })
+    }
+    
+    func endBackGroundTask(){
+        UIApplication.shared.endBackgroundTask(backgroundTask)
+        backgroundTask = UIBackgroundTaskInvalid
     }
     
     internal func getThumbnail()->UIImage?{
@@ -52,7 +68,7 @@ class CellModel:DownloadmanagerDelegate {
     
     
     public func downLoad(with refreshBlock:@escaping UIRefreshBlock){
-        self.downloadmanager = DownloadManager.init(with: .background(withIdentifier: Bundle.main.bundleIdentifier!))
+        self.downloadmanager = DownloadManager.init(with: .default)
         self.downloadmanager?.onProgress = self.onProgress
         self.downloadmanager?.downloadFile(with: self.file.url!, delegate: self)
         self.uiRefreshBlock = refreshBlock
@@ -63,18 +79,25 @@ class CellModel:DownloadmanagerDelegate {
     }
     
     
-    func didCompleteTask(with success:Bool,location:URL) {
+    func didCompleteTask(with success:Bool,location:URL?) {
         weak var weakSelf = self
         if success {
-            
-            let mimeType:MimeType? = CellModalHelper.moveFile(for: self.file.name!, from: location)
-            weakSelf?.downloadmanager?.urlSession().finishTasksAndInvalidate()
-            CellModalHelper.updateFile(file: &file, with: mimeType!, and: (weakSelf?.file.name!)!)
-            weakSelf?.downloadmanager = nil
-            self.uiRefreshBlock(true,file.path?.path)
+            if let tempLocation = location{
+                let mimeType:MimeType? = CellModalHelper.moveFile(for: self.file.name!, from: tempLocation)
+                weakSelf?.downloadmanager?.urlSession().finishTasksAndInvalidate()
+                CellModalHelper.updateFile(file: &file, with: mimeType!, and: (weakSelf?.file.name!)!)
+                weakSelf?.downloadmanager = nil
+                self.uiRefreshBlock(true,file.path?.path)
+            }else{
+                self.uiRefreshBlock(false,nil)
+            }
         }else{
             self.uiRefreshBlock(false,nil)
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
 }

@@ -110,7 +110,7 @@ class FileListViewController: UICollectionViewController,UICollectionViewDelegat
             break;
         }
         self.displayStyle = DisplayStyle.init(rawValue: self.toggleButton.title!)!
-        self.navigationItem.setRightBarButtonItems([self.toggleButton], animated: true)
+        self.navigationItem.setLeftBarButtonItems([self.toggleButton], animated: true)
         self.collectionView?.reloadData()
         
     }
@@ -206,7 +206,7 @@ extension FileListViewController{
         
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    /*func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let width = self.collectionView?.frame.width
         
@@ -223,11 +223,21 @@ extension FileListViewController{
         case .list:
             return CGSize(width: width!, height: 120)
         }
+    }*/
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let picDimension = self.view.frame.size.width / 4.0
+        return CGSize(width: picDimension, height: picDimension)
     }
     
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        let leftRightInset = self.view.frame.size.width / 14.0
+        return UIEdgeInsetsMake(0, leftRightInset, 0, leftRightInset)
     }
+
+    
+//     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+//        return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+//    }
     
      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 5
@@ -325,15 +335,14 @@ extension FileListViewController{
                 }catch{
                     print(error)
                 }
-                
             }
-            
         }
         
         let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
         activityVC.popoverPresentationController?.sourceView = self.view
         weak var weakSelf = self
         self.present(activityVC, animated: true) {
+            FileViewModel.cancelSelection()
             weakSelf?.isSelectionModeOn = false
             weakSelf?.collectionView?.reloadData()
             weakSelf?.toggleSelectButton()

@@ -8,14 +8,14 @@
 
 import UIKit
 
-class GalleryItemsLayout: UICollectionViewLayout {
+class CustomCollectionLayout: UICollectionViewLayout {
     
-    var horizontalInset = 0.0 as CGFloat
-    var verticalInset = 0.0 as CGFloat
+    var horizontalInset = 5.0 as CGFloat
+    var verticalInset = 5.0 as CGFloat
     
-    var minimumItemWidth = 0.0 as CGFloat
-    var maximumItemWidth = 0.0 as CGFloat
-    var itemHeight = 0.0 as CGFloat
+    var minimumItemWidth = 200.0 as CGFloat
+    var maximumItemWidth = 250 as CGFloat
+    var itemHeight = 200 as CGFloat
     
     var _layoutAttributes = Dictionary<String, UICollectionViewLayoutAttributes>()
     var _contentSize = CGSize.zero
@@ -28,18 +28,10 @@ class GalleryItemsLayout: UICollectionViewLayout {
         
         _layoutAttributes = Dictionary<String, UICollectionViewLayoutAttributes>() // 1
         
-        let path = IndexPath(item: 0, section: 0)
-        let attributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, with: path)
-        
-        let headerHeight = CGFloat(self.itemHeight / 4)
-        attributes.frame = CGRect(x: 0, y: 0, width: self.collectionView!.frame.size.width, height: headerHeight)
-        
-        let headerKey = layoutKeyForHeaderAtIndexPath(path)
-        _layoutAttributes[headerKey] = attributes // 2
         
         let numberOfSections = self.collectionView!.numberOfSections // 3
         
-        var yOffset = headerHeight
+        var yOffset = 0.0 as CGFloat
         
         for section in 0 ..< numberOfSections {
             

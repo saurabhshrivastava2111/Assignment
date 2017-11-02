@@ -11,7 +11,7 @@ import Swime
 
 protocol DownloadmanagerDelegate:class {
 //    func didCompleteTask(with success:Bool)
-    func didCompleteTask(with success:Bool,location:URL)
+    func didCompleteTask(with success:Bool,location:URL?)
 }
 
 final class DownloadManager:NSObject,URLSessionTaskDelegate,URLSessionDownloadDelegate{
@@ -116,6 +116,7 @@ extension DownloadManager{
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        self.delegate?.didCompleteTask(with: false,location:nil)
         debugPrint("Task completed: \(task), error: \(String(describing: error))")
     }
 }
