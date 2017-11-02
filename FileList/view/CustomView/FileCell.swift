@@ -66,6 +66,7 @@ class GridFileCell: UICollectionViewCell {
     @IBOutlet weak var btnSelect:UIButton!
     @IBOutlet weak var viewProgress:UIView!
     @IBOutlet weak var imgThumbnail: UIImageView!
+    @IBOutlet weak var btnPlay:UIButton!
     override var isSelected: Bool{
         didSet{
             if self.isSelected {
@@ -88,7 +89,12 @@ class GridFileCell: UICollectionViewCell {
     
     func setDataToUIControls(){
         if self.cellModel.isDownloaded() {
-            self.imgThumbnail.image = self.cellModel.thumbnail()
+            self.imgThumbnail.image = self.cellModel.thumbnail().0!
+            if (self.cellModel.thumbnail().1){
+                self.btnPlay.isHidden = false
+            }else{
+                self.btnPlay.isHidden = true
+            }
             self.viewProgress.isHidden = true
         }else{
             self.imgThumbnail.image = UIImage()
@@ -159,7 +165,12 @@ class GridFileCell: UICollectionViewCell {
                 weakSelf?.viewProgress.isHidden = true
 
                 if (success){
-                    weakSelf?.imgThumbnail.image = weakSelf?.cellModel.thumbnail()
+                    weakSelf?.imgThumbnail.image = weakSelf?.cellModel.thumbnail().0
+                    if(weakSelf?.cellModel.thumbnail().1)!{
+                        weakSelf?.btnPlay.isHidden = false
+                    }else{
+                        weakSelf?.btnPlay.isHidden = true
+                    }
                     CoreData.shared.saveContext()
 
                 }else{

@@ -146,6 +146,11 @@
                                                 <action selector="sel_btnDownLoadWithDownLoad:" destination="abP-AX-Cgn" eventType="touchUpInside" id="xH0-vu-0FH"/>
                                             </connections>
                                         </button>
+                                        <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VF8-a5-wVB" userLabel="PlayPause Button">
+                                            <rect key="frame" x="10" y="-12" width="30" height="30"/>
+                                            <state key="normal" backgroundImage="Play"/>
+                                            <state key="selected" backgroundImage="Play"/>
+                                        </button>
                                     </subviews>
                                 </view>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -153,16 +158,21 @@
                                     <constraint firstItem="aXP-9p-jLw" firstAttribute="centerX" secondItem="abP-AX-Cgn" secondAttribute="centerX" id="07M-hG-FFZ"/>
                                     <constraint firstItem="aXP-9p-jLw" firstAttribute="centerY" secondItem="abP-AX-Cgn" secondAttribute="centerY" id="6OS-jP-XO1"/>
                                     <constraint firstAttribute="trailing" secondItem="aJY-sr-8RN" secondAttribute="trailing" constant="1" id="BDb-wg-skj"/>
+                                    <constraint firstItem="VF8-a5-wVB" firstAttribute="centerY" secondItem="szn-cP-10t" secondAttribute="centerY" id="FtM-XQ-CrQ"/>
                                     <constraint firstItem="mSq-ml-DZi" firstAttribute="centerY" secondItem="abP-AX-Cgn" secondAttribute="centerY" id="Inp-S6-g7I"/>
                                     <constraint firstAttribute="bottom" secondItem="aJY-sr-8RN" secondAttribute="bottom" id="LFf-Ca-9RC"/>
+                                    <constraint firstItem="VF8-a5-wVB" firstAttribute="centerX" secondItem="szn-cP-10t" secondAttribute="centerX" id="ONs-EU-keu"/>
                                     <constraint firstItem="szn-cP-10t" firstAttribute="centerX" secondItem="abP-AX-Cgn" secondAttribute="centerX" id="Zk6-LU-9mh"/>
+                                    <constraint firstItem="VF8-a5-wVB" firstAttribute="width" secondItem="szn-cP-10t" secondAttribute="width" id="aOq-MR-2LL"/>
                                     <constraint firstItem="mSq-ml-DZi" firstAttribute="height" secondItem="abP-AX-Cgn" secondAttribute="height" id="cWf-56-jM6"/>
+                                    <constraint firstItem="VF8-a5-wVB" firstAttribute="height" secondItem="szn-cP-10t" secondAttribute="height" id="ges-MW-pmT"/>
                                     <constraint firstItem="szn-cP-10t" firstAttribute="centerY" secondItem="abP-AX-Cgn" secondAttribute="centerY" id="pwm-Q0-Jjx"/>
                                     <constraint firstItem="mSq-ml-DZi" firstAttribute="width" secondItem="abP-AX-Cgn" secondAttribute="width" id="pz2-MC-kFD"/>
                                     <constraint firstItem="mSq-ml-DZi" firstAttribute="centerX" secondItem="abP-AX-Cgn" secondAttribute="centerX" id="yqd-ie-97N"/>
                                 </constraints>
                                 <connections>
                                     <outlet property="btnDownload" destination="szn-cP-10t" id="1je-44-ZA6"/>
+                                    <outlet property="btnPlay" destination="VF8-a5-wVB" id="drx-p6-iWw"/>
                                     <outlet property="btnSelect" destination="aJY-sr-8RN" id="kOg-t1-bwe"/>
                                     <outlet property="imgThumbnail" destination="mSq-ml-DZi" id="gLj-K1-oer"/>
                                     <outlet property="viewProgress" destination="aXP-9p-jLw" id="S1e-tn-Wj2"/>
@@ -225,6 +235,7 @@
     <resources>
         <image name="Cancel" width="64" height="64"/>
         <image name="Download" width="64" height="64"/>
+        <image name="Play" width="64" height="128"/>
         <image name="Selected" width="49" height="64"/>
     </resources>
 </document>

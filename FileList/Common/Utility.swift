@@ -83,7 +83,7 @@ class Utility: NSObject {
             let asset = AVURLAsset.init(url: url)
             let imgGenerator = AVAssetImageGenerator(asset: asset)
             imgGenerator.appliesPreferredTrackTransform = true
-            let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(0, 100), actualTime: nil)
+            let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(30, 50), actualTime: nil)
             let uiImage = UIImage.init(cgImage: cgImage)
             
             return uiImage

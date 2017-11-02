@@ -51,15 +51,15 @@ class CellModel:DownloadmanagerDelegate {
         return self.file
     }
     
-    internal func thumbnail()->UIImage?{
+    internal func thumbnail()->(UIImage?,Bool){
         if let thumbnail = self.file.thumbnail {
-            return thumbnail
+            return (thumbnail,false)
         }else{
             if let tempMimeype = self.file.mimeType{
                 return CellModalHelper.thumbNail(mimeType: tempMimeype,name: self.file.name!)
             }
         }
-        return nil
+        return (nil,false)
     }
     
     internal func isDownloaded()->Bool{
@@ -127,7 +127,7 @@ final class CellModalHelper{
     }
     
     
-    static func thumbNail(mimeType:MimeType?,name:String)->UIImage{
+    static func thumbNail(mimeType:MimeType?,name:String)->(UIImage?,Bool){
         let fileURLPath = Utility.url(for: name, with: (mimeType?.ext)!)
         var data = try? Data.init(contentsOf:fileURLPath )
 
@@ -136,7 +136,7 @@ final class CellModalHelper{
             case .jpg,.png,.gif:
                 if let image = UIImage.init(data: data!, scale: 1.0){
                     data = nil
-                    return Utility.generateThumbnail(for: image, with: CGSize.init(width: 100.0, height: 100.0))
+                    return (Utility.generateThumbnail(for: image, with: CGSize.init(width: 100.0, height: 100.0)),false)
                 }
             case .pdf,.rtf:
                 break
@@ -144,13 +144,13 @@ final class CellModalHelper{
             case .mov,.mp4,.m4v:
                 // generate thumbnail for Video
                 
-                return Utility.generateVideoThumbnail(with: fileURLPath)
+                return (Utility.generateVideoThumbnail(with: fileURLPath),true)
                 
             default: break
                 
             }
         }
-        return UIImage.init(named: "Default")!
+        return (UIImage.init(named: "Default")!,false)
     }
     
     static func updateFile( file:inout File,with mimeType:MimeType,and name:String){
